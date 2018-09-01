@@ -4,6 +4,7 @@ import {Navigator} from 'react-native-deprecated-custom-components';
 
 import ClientsPage from './app/components/ClientsPage/ClientsPage';
 import NewClientForm from './app/components/NewClientForm/NewClientForm';
+import ClientCalendar from './app/components/ClientCalendar/ClientCalendar';
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -13,6 +14,8 @@ export default class App extends Component<Props> {
         return(<ClientsPage navigator={navigator} title="clientsPage" />);
       case 'newClientForm':
         return(<NewClientForm navigator={navigator} title="newClientForm" />);
+      case 'clientCalendar':
+        return(<ClientCalendar navigator={navigator} title="clientCalendar" />);
     }
   }
 

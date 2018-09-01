@@ -11,6 +11,12 @@ export default class ClientsPage extends Component<Props> {
     });
   }  
 
+  onPressCalendar() {
+    this.props.navigator.push({
+      id: 'clientCalendar'
+    })
+  }
+
   render() {
     return (
       <View>
@@ -22,6 +28,12 @@ export default class ClientsPage extends Component<Props> {
           rounded
           title="+ Add Client"
           onPress={() => {this.onPress()}}
+        />
+        <Button
+          raised
+          rounded
+          title="Calendar"
+          onPress={() => {this.onPressCalendar()}}
         />
       </View>
     );
