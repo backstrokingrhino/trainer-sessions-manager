@@ -1,16 +1,28 @@
 import React, {Component} from 'react';
 import {AppRegistry, Platform, StyleSheet, Text, View} from 'react-native';
+import {Navigator} from 'react-native-deprecated-custom-components';
 
 import ClientsPage from './app/components/ClientsPage/ClientsPage';
-
+import NewClientForm from './app/components/NewClientForm/NewClientForm';
 
 type Props = {};
 export default class App extends Component<Props> {
+  renderScene(route, navigator) {
+    switch(route.id) {
+      case 'clientsPage':
+        return(<ClientsPage navigator={navigator} title="clientsPage" />);
+      case 'newClientForm':
+        return(<NewClientForm navigator={navigator} title="newClientForm" />);
+    }
+  }
+
   render() {
     return (
-      <View>
-        <ClientsPage />
-      </View>
+      <Navigator 
+        initialRoute={{id: 'clientsPage'}}
+        renderScene={this.renderScene}
+        configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromRight}
+      />
     );
   }
 }

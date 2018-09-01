@@ -1,17 +1,28 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, Button, ListView} from 'react-native';
-import {Header} from 'react-native-elements';
+import {AppRegistry, StyleSheet, Text, View, ListView} from 'react-native';
+import {Header, Button} from 'react-native-elements';
 import {Navigator} from 'react-native-deprecated-custom-components';
 
 type Props = {};
 export default class ClientsPage extends Component<Props> {
+  onPress() {
+    this.props.navigator.push({
+      id: 'newClientForm'
+    });
+  }  
+
   render() {
     return (
       <View>
         <Header 
           centerComponent={{text: 'My Clients', style: { color: '#fff', fontSize: 22 } }}
         />
-
+        <Button
+          raised
+          rounded
+          title="+ Add Client"
+          onPress={() => {this.onPress()}}
+        />
       </View>
     );
   }
