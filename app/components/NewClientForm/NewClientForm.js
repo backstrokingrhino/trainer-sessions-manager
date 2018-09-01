@@ -37,7 +37,7 @@ export default class NewClientForm extends Component {
     return(
       <View>
         <Header 
-          leftComponent={{icon: 'chevron-left', color: '#fff', onPress: () => this.onPress() }}
+          leftComponent={{icon: 'arrow-back', color: '#fff', onPress: () => this.onPress() }}
           centerComponent={{ text: 'New Client', style: { color: '#fff', fontSize: 22 } }}
         />
         <FormLabel>Name</FormLabel>
