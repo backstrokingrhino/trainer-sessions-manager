@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View} from 'react-native';
+import {AppRegistry, StyleSheet, Text, View, AsyncStorage} from 'react-native';
 import {FormLabel, FormInput, Header, Button, Icon} from 'react-native-elements';
 
+//import ClientsPage from './app/components/ClientsPage/ClientsPage';
 
 type Props = {};
 export default class NewClientForm extends Component {
@@ -11,14 +12,47 @@ export default class NewClientForm extends Component {
 
     this.state = {
       name:'',
-      nameFieldEmpty:true
+      sessionsSigned: -1,
+      sessionsCompleted: -1,
+      nameFieldEmpty: true
     }
   }
 
   onPress() {
-    this.props.navigator.push({
-      id: 'clientsPage' // change to calendar
-    });
+    const clientData = [];
+    const data = {
+      name: this.state.name,
+      sessionsSigned: this.state.sessionsSigned,
+      sessionsCompleted: this.state.sessionsCompleted,
+      markedDates: ['2018-09-14'],
+    }
+    clientData.push(data);
+    try {
+      AsyncStorage.getItem('client_database').then((value) => {
+        if (value != null) {
+          const currData = JSON.parse(value);
+          currData.push(data);
+          AsyncStorage.setItem('client_database', JSON.stringify(currData)).then(() => {
+            this.props.navigator.push({
+              //component: ClientsPage,
+              id: 'clientsPage' // change to calendar
+            });
+          });
+        }
+        else {
+          AsyncStorage.setItem('client_database', JSON.stringify(clientData)).then(() => {
+            this.props.navigator.push({
+              id: 'clientsPage' // change to calendar
+            });
+          });    
+        }
+      })
+      
+    } catch(error) {
+      console.log(error);
+    }
+
+    
   } 
 
   onChangeText(value) {

@@ -15,7 +15,7 @@ export default class App extends Component<Props> {
       case 'newClientForm':
         return(<NewClientForm navigator={navigator} title="newClientForm" />);
       case 'clientCalendar':
-        return(<ClientCalendar navigator={navigator} title="clientCalendar" />);
+        return(<ClientCalendar client={route.client} navigator={navigator} title="clientCalendar" />);
     }
   }
 
