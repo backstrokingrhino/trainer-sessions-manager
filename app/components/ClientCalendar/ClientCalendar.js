@@ -22,20 +22,21 @@ export default class ClientCalendar extends Component<Props> {
   constructor() {
     super();
     let month = date.getMonth();
-    let year = date.getFullYear();
+    let dateString = this.getTodayDate(date.getDate(), date.getMonth() + 1, date.getFullYear());
     this.state = {
       //pressedDate: date,
-      currentMonth: month, // starting at 0 -> Jan
-      currentMonthSessions: this.getTotalSessions(month + 1),
-      currentFullDate: this.getTodayDate(month + 1, year),
-      monthVisible: this.getTodayDate(month + 1, year),
-      addOrRemoveSessionToday: this.addOrRemoveToday(this.getTodayDate(month + 1, year))
+      currentMonth: month, // currently visible month number starting at 0 -> Jan
+      currentMonthSessions: this.getTotalSessions(month + 1), // sessions completed in current month
+      currentFullDate: dateString, // dayString of date today
+      monthVisible: dateString, // dayString of month visible on calendar
+      addOrRemoveSessionToday: this.addOrRemoveToday(dateString), // string for add/remove session today button
+      addOrRemoveTodayIcon: this.addOrRemoveTodayIcon(dateString), // icon for add/remove session today button
     };
     this.onDayPress = this.onDayPress.bind(this);
   }
 
-  getTodayDate(month, year) {
-    return (year.toString() + '-' + ('0' + month).slice(-2) + '-' + ('0' + date.getDate()).slice(-2));
+  getTodayDate(day, month, year) { // change name to getDayString()
+    return (year + '-' + ('0' + month).slice(-2) + '-' + ('0' + day).slice(-2));
   }
 
   addOrRemoveToday(date) {
@@ -43,10 +44,15 @@ export default class ClientCalendar extends Component<Props> {
     return (buttonText);  
   }
 
-  getTotalSessions(month) {
+  addOrRemoveTodayIcon(date) {
+    let buttonIconName = markedDates.includes(date) ? 'close' : 'add';
+    return (buttonIconName);
+  }
+
+  getTotalSessions(currentMonth) {
     let count = 0;
     markedDates.forEach(function(date) {
-      let currentMonth = parseInt(date.substring(5, 7));
+      let month = parseInt(date.substring(5, 7));
       if (month == currentMonth) {
         count++;
       }
@@ -54,25 +60,31 @@ export default class ClientCalendar extends Component<Props> {
     return (count);
   }
 
-  onDayPress(dayString) {
-    //this.setState({
-     // pressedDate: day,
-    //});
-    //let date = day.dateString;
+  //checks if the currentMonth is the visibleMonth
+  currentMonthVisibleCheck() {
+    return (this.state.mo + 1 === parseInt(this.state.monthVisible.substring(5, 7)));
+  }
+
+  //
+  onDayPress(dayString) { // check VisibleMonth is currentMonth becore chaning sessions 
+    let sessionChange = 1;
     if (markedDates.includes(dayString)) {
-      markedDates.splice(markedDates.indexOf(date), 1);
-      this.setState({
-        currentMonthSessions: this.state.currentMonthSessions - 1
-      });
+      markedDates.splice(markedDates.indexOf(dayString), 1);
+      sessionChange = -1;
     }
     else {
       markedDates.push(dayString);
-      this.setState({
-        currentMonthSessions: this.state.currentMonthSessions + 1
-      });
     }
+    //  check if current month sessions need to be changed
+    if (this.state.monthVisible.substring(5, 7) == dayString.substring(5, 7)) {
+      this.setState({
+        currentMonthSessions: this.state.currentMonthSessions + sessionChange,
+      })
+    }
+    //  setting state of add/remove session today button
     this.setState({
-      addOrRemoveSessionToday: this.addOrRemoveToday(this.state.currentFullDate)
+      addOrRemoveSessionToday: this.addOrRemoveToday(this.state.currentFullDate),
+      addOrRemoveTodayIcon: this.addOrRemoveTodayIcon(this.state.currentFullDate),
     });
   }
 
@@ -80,14 +92,25 @@ export default class ClientCalendar extends Component<Props> {
     this.setState({
       currentMonth: month.month - 1,
       currentMonthSessions: this.getTotalSessions(month.month),
+      monthVisible: this.getTodayDate(1, month.month, month.year),
     });
   }
 
   onBackPress() {
     this.props.navigator.push({
-      id: 'clientsPage' // change to calendar
+      id: 'clientsPage' 
     });
   } 
+
+  onBackToCurrentPress() {
+    let month = date.getMonth();
+    this.setState({
+      monthVisible: this.state.currentFullDate,
+      currentMonth: month,
+      currentMonthSessions: this.getTotalSessions(month + 1),
+
+    });
+  }
 
   render() {
     let allMarkedDays = {}
@@ -107,8 +130,15 @@ export default class ClientCalendar extends Component<Props> {
             leftComponent={{icon: 'arrow-back', color: '#fff', onPress: () => this.onBackPress() }}
             centerComponent={{ text: '*Client\'s* Sessions', style: { color: '#fff', fontSize: 22 } }}
           />
-          <Text></Text>
+          <Button
+            raised
+            rounded
+            title="Return to Current Month"
+            onPress={() => this.onBackToCurrentPress()}
+          />
+
           <Calendar
+            current={this.state.monthVisible}
             onDayPress={(day) => {this.onDayPress(day.dateString)}}
             onMonthChange={(month) => this.onMonthChange(month)}
             markedDates={allMarkedDays}
@@ -116,7 +146,11 @@ export default class ClientCalendar extends Component<Props> {
               todayTextColor: '#ff2b2b'
             }}
           />
+
           <Button 
+            raised
+            rounded
+            icon={{name: this.state.addOrRemoveTodayIcon}}
             title={this.state.addOrRemoveSessionToday}
             onPress={() => this.onDayPress(this.state.currentFullDate)}
           />
@@ -124,6 +158,7 @@ export default class ClientCalendar extends Component<Props> {
           <Text>{Date()}</Text>
           <Text>{this.state.currentFullDate}</Text>
           <Text>{this.state.addOrRemoveSessionToday}</Text>
+          <Text>{this.state.monthVisible}</Text>
         </View>
         <View style={styles.footer}>
           <Text style={styles.footerText}>Sessions Completed In {months[this.state.currentMonth]}: {this.state.currentMonthSessions}</Text>
@@ -162,7 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 60,
-    bottom: 10
+    bottom: 0
   }
 });
 
