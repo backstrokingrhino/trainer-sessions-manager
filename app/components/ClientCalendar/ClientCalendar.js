@@ -31,26 +31,35 @@ export default class ClientCalendar extends Component<Props> {
       addRemoveTodayButton: {
         title: '',
         icon: 'add',
-        color: 'limegreen'
+        color: 'green'
       },
-      markedDates: this.props.client.markedDates
+      markedDates: this.props.navigation.state.params.markedDates,
+      clientName: this.props.navigation.state.params.clientName
     };
-    this.onDayPress = this.onDayPress.bind(this);
+    //this.onDayPress = this.onDayPress.bind(this);
+    this.onMonthChange = this.onMonthChange.bind(this);
   }
 
+  static navigationOptions = ({ navigation }) => {
+    let pageTitle = `${navigation.getParam('clientName')}\'s Sessions`;
+    return {
+      title: pageTitle,
+    };
+  };
+
   componentDidMount() {
-    this.setMarkedDates();
+    //this.setMarkedDates();
     this.setState({
       currentMonthSessions: this.getTotalSessions(date.getMonth() + 1), // sessions completed in current month
       addRemoveTodayButton: this.setAddRemoveTodayButton(this.state.currentFullDate),
     })
   }
 
-  setMarkedDates() {
-    this.setState({
-      markedDates: this.props.client.markedDates
-    })
-  }
+  //setMarkedDates() {
+    //this.setState({
+      //markedDates: this.props.navigation.state.params.client.markedDates
+    //})
+  //}
 
   getTodayDate(day, month, year) { // change name to getdateString()
     return (year + '-' + ('0' + month).slice(-2) + '-' + ('0' + day).slice(-2));
@@ -62,7 +71,7 @@ export default class ClientCalendar extends Component<Props> {
     let button = {
       title: checkMarkedDate ? 'Remove Today\'s Session' : 'Add Session Today',
       icon: checkMarkedDate ? 'close' : 'add',
-      color: checkMarkedDate ? 'red' : 'limegreen',
+      color: checkMarkedDate ? 'red' : 'green',
     };
     return (button);
   }
@@ -130,14 +139,12 @@ export default class ClientCalendar extends Component<Props> {
     try {
       AsyncStorage.getItem('client_database').then((value) => {
         let currData = JSON.parse(value);
-        let currClientData = currData.find(c => c.name === this.props.client.name);
+        let currClientData = currData.find(c => c.name === this.state.clientName);
         currData.splice(currData.indexOf(currClientData), 1);
         currClientData.markedDates = this.state.markedDates;
         currData.push(currClientData);
         AsyncStorage.setItem('client_database', JSON.stringify(currData)).then(() => {
-          this.props.navigator.push({
-            id: 'clientsPage' 
-          });
+          this.props.navigation.navigate('Home');
         })
       })
     } catch(e) {
@@ -178,45 +185,34 @@ export default class ClientCalendar extends Component<Props> {
 
     return (
       <View style={styles.container}>
-        <View style={styles.body}>
-        <Header 
-          leftComponent={{icon: 'arrow-back', color: '#fff', onPress: () => this.onBackPress() }}
-          centerComponent={{ text: `${this.props.client.name}\'s Sessions`, style: { color: '#fff', fontSize: 22 } }}
-        />
-        <Button
-          raised
-          rounded
-          title="Return to Current Month"
-          onPress={() => this.onBackToCurrentPress()}
-        />
-        <Calendar
-          current={this.state.monthVisible}
-          onDayPress={(day) => {this.onDayPress(day.dateString)}}
-          onMonthChange={(month) => this.onMonthChange(month)}
-          markedDates={allMarkedDays}
-          theme={{
-            todayTextColor: '#ff2b2b'
-          }}
-        />
-
-        <Button 
-          raised
-          rounded
-          backgroundColor={this.state.addRemoveTodayButton.color}
-          icon={{name: this.state.addRemoveTodayButton.icon}}
-          title={this.state.addRemoveTodayButton.title}
-          onPress={() => this.onDayPress(this.state.currentFullDate)}
-        />
-
-        <Text>Date(): {Date()}</Text>
-        <Text>Current full date: {this.state.currentFullDate}</Text>
-        <Text>{this.state.addRemoveTodayButton['title']}</Text>
-        <Text>Month visible: {this.state.monthVisible}</Text>
-        <Text>Client Name: {this.props.client.name}</Text>
-        <Text>Client dates: {this.state.markedDates.constructor.name}</Text>
+        <View style={styles.body}>          
+          <Button
+            rounded
+            title="Return to Current Month"
+            onPress={() => this.onBackToCurrentPress()}
+          />
+          
+          <Calendar
+            current={this.state.monthVisible}
+            onDayPress={(day) => {this.onDayPress(day.dateString)}}
+            onMonthChange={(month) => this.onMonthChange(month)}
+            markedDates={allMarkedDays}
+            theme={{
+              todayTextColor: '#ff2b2b'
+            }}
+          />
+          <View style={styles.spacing}>
+            <Button 
+              rounded
+              backgroundColor={this.state.addRemoveTodayButton.color}
+              icon={{name: this.state.addRemoveTodayButton.icon}}
+              title={this.state.addRemoveTodayButton.title}
+              onPress={() => this.onDayPress(this.state.currentFullDate)}
+            />
+          </View>
         </View>
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Sessions Completed In {months[this.state.currentMonth]}: {this.state.currentMonthSessions}</Text>
+        <Text style={styles.footerText}>Sessions Completed In {months[this.state.currentMonth]}: {this.state.currentMonthSessions}</Text>
         </View>
       </View>
     );
@@ -233,8 +229,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   spacing: {
-    flex: 0.2,
-    justifyContent: 'center'
+    alignItems: 'center'
+
   },
   footerText: {
     fontSize: 20,

@@ -1,31 +1,37 @@
 import React, {Component} from 'react';
 import {AppRegistry, Platform, StyleSheet, Text, View} from 'react-native';
-import {Navigator} from 'react-native-deprecated-custom-components';
+import {createStackNavigator} from 'react-navigation';
 
 import ClientsPage from './app/components/ClientsPage/ClientsPage';
 import NewClientForm from './app/components/NewClientForm/NewClientForm';
 import ClientCalendar from './app/components/ClientCalendar/ClientCalendar';
 
 type Props = {};
-export default class App extends Component<Props> {
-  renderScene(route, navigator) {
-    switch(route.id) {
-      case 'clientsPage':
-        return(<ClientsPage navigator={navigator} title="clientsPage" />);
-      case 'newClientForm':
-        return(<NewClientForm navigator={navigator} title="newClientForm" />);
-      case 'clientCalendar':
-        return(<ClientCalendar client={route.client} navigator={navigator} title="clientCalendar" />);
+
+const RootStack = createStackNavigator(
+  {
+    Home: ClientsPage,
+    Calendar: ClientCalendar,
+    NewClient: NewClientForm
+  },
+  {
+    initialRouteName: 'Home',
+    title: 'test',
+    navigationOptions: {
+      headerStyle: {
+        backgroundColor: '#476DC6'
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontSize: 22
+      },
     }
   }
-
+);
+export default class App extends Component<Props> {
   render() {
     return (
-      <Navigator 
-        initialRoute={{id: 'clientsPage'}}
-        renderScene={this.renderScene}
-        configureScene={(route, routeStack) => Navigator.SceneConfigs.FloatFromRight}
-      />
+      <RootStack />
     );
   }
 }

@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {AppRegistry, StyleSheet, Text, View, ListView, AsyncStorage, FlatList, TouchableHighlight} from 'react-native';
 import {Header, Button, List, ListItem} from 'react-native-elements';
-import {Navigator} from 'react-native-deprecated-custom-components';
 
 const testList = [
   {
@@ -18,6 +17,10 @@ export default class ClientsPage extends Component<Props> {
     this.state = {
       clients: JSON.parse('{}'),
     };
+  }
+
+  static navigationOptions = {
+    title: 'My Clients',
   }
 
   componentDidMount() {
@@ -39,15 +42,13 @@ export default class ClientsPage extends Component<Props> {
   }
 
   onPress() {
-    this.props.navigator.push({
-      id: 'newClientForm',
-    });
+    this.props.navigation.navigate('NewClient', {test: 'test item thru navigation'});
   }  
 
   userPressed(client) {
-    this.props.navigator.push({
-      id: 'clientCalendar',
-      client: client
+    this.props.navigation.navigate('Calendar', {
+      clientName: client.name,
+      markedDates: client.markedDates,
     });
   }
 
@@ -66,18 +67,12 @@ export default class ClientsPage extends Component<Props> {
 
     return (
       <View style={styles.container}>
-        <Header 
-          centerComponent={{text: 'My Clients', style: { color: '#fff', fontSize: 22 } }}
-        />
         <Text></Text>
         <Button
           raised
-          rounded
           title="+ Add Client"
           onPress={() => {this.onPress()}}
         />
-
-        <Text>{this.state.test}</Text>
         <View style={{flex: 1}}>
           <List>
             <FlatList

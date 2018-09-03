@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, AsyncStorage} from 'react-native';
+import {AppRegistry, StyleSheet, Text, View, AsyncStorage, TouchableOpacity} from 'react-native';
 import {FormLabel, FormInput, Header, Button, Icon} from 'react-native-elements';
 
 //import ClientsPage from './app/components/ClientsPage/ClientsPage';
@@ -18,6 +18,10 @@ export default class NewClientForm extends Component {
     }
   }
 
+  static navigationOptions = {
+    title: 'New Client'
+  }
+
   onPress() {
     const clientData = [];
     const data = {
@@ -33,17 +37,12 @@ export default class NewClientForm extends Component {
           const currData = JSON.parse(value);
           currData.push(data);
           AsyncStorage.setItem('client_database', JSON.stringify(currData)).then(() => {
-            this.props.navigator.push({
-              //component: ClientsPage,
-              id: 'clientsPage' // change to calendar
-            });
+            this.props.navigation.navigate('Home');
           });
         }
         else {
           AsyncStorage.setItem('client_database', JSON.stringify(clientData)).then(() => {
-            this.props.navigator.push({
-              id: 'clientsPage' // change to calendar
-            });
+            this.props.navigation.navigate('Home');
           });    
         }
       })
@@ -52,7 +51,6 @@ export default class NewClientForm extends Component {
       console.log(error);
     }
 
-    
   } 
 
   onChangeText(value) {
@@ -67,30 +65,40 @@ export default class NewClientForm extends Component {
     }
   }
 
+  onBackPress() {
+    this.props.navigation.navigate('Home');
+  }
+
+  onSSChanged(value) {
+    this.setState({ sessionsSigned: value });
+  }
+
+  onSCChanged(value) {
+    this.setState({ sessionsCompleted: value });
+  }
+
   render() {
     return(
       <View>
-        <Header 
-          leftComponent={{icon: 'arrow-back', color: '#fff', onPress: () => this.onPress() }}
-          centerComponent={{ text: 'New Client', style: { color: '#fff', fontSize: 22 } }}
-        />
         <FormLabel>Name</FormLabel>
         <FormInput 
           placeholder="Enter name"
           autoCapitalize="words"
+          autoCorrect={false}
           onChangeText={(value) => this.onChangeText(value)}
-          value={this.state.name}
         />
 
         <FormLabel>Sessions Signed Up For</FormLabel>
         <FormInput 
           placeholder="Optional"
           keyboardType="number-pad"
+          onChangeText={(value) => this.onSSChanged(value)}
         />
         <FormLabel>Sessions Completed</FormLabel>
         <FormInput 
           placeholder="Optional"
           keyboardType="number-pad"
+          onChangeText={(value) => this.onSCChanged(value)}
         />
         <Button 
           raised
