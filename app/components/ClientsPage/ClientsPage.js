@@ -12,10 +12,10 @@ const testList = [
 type Props = {};
 export default class ClientsPage extends Component<Props> {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      clients: JSON.parse('{}'),
+      clients: this.fetchClients(),
     };
   }
 
@@ -27,7 +27,7 @@ export default class ClientsPage extends Component<Props> {
     this.fetchClients();
   }
 
-  fetchClients() {
+  fetchClients = () => {
     try {
       AsyncStorage.getItem('client_database').then((value) => {
         if (value !== null) {
@@ -41,8 +41,8 @@ export default class ClientsPage extends Component<Props> {
     }
   }
 
-  onPress() {
-    this.props.navigation.navigate('NewClient', {test: 'test item thru navigation'});
+  onPress = () => {
+    this.props.navigation.navigate('NewClient', {onNavigateBack: this.fetchClients});
   }  
 
   userPressed(client) {
@@ -71,8 +71,9 @@ export default class ClientsPage extends Component<Props> {
         <Button
           raised
           title="+ Add Client"
-          onPress={() => {this.onPress()}}
+          onPress={this.onPress}
         />
+        
         <View style={{flex: 1}}>
           <List>
             <FlatList
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
   add: {
     alignItems:'center',
     justifyContent: 'center'
-  }
+  },
 });
 
 AppRegistry.registerComponent('ClientsPage', () => ClientsPage);
