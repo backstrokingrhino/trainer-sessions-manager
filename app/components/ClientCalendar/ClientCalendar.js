@@ -50,7 +50,7 @@ export default class ClientCalendar extends Component<Props> {
   componentDidMount() {
     //this.setMarkedDates();
     this.setState({
-      currentMonthSessions: this.getTotalSessions(date.getMonth() + 1), // sessions completed in current month
+      currentMonthSessions: this.getTotalSessions(date.getMonth() + 1, date.getFullYear()), // sessions completed in current month
       addRemoveTodayButton: this.setAddRemoveTodayButton(this.state.currentFullDate),
     })
   }
@@ -86,12 +86,11 @@ export default class ClientCalendar extends Component<Props> {
     return (false);
   }
 
-  getTotalSessions(currentMonth) {
+  getTotalSessions(currentMonth, currentYear) {
     let count = 0;
     let marked = this.state.markedDates;
     for (i = 0; i < this.state.markedDates.length; i++) {
-      let month = parseInt(marked[i].substring(5, 7));
-      if (month == currentMonth) {
+      if (parseInt(marked[i].substring(5, 7)) == currentMonth && parseInt(marked[i].substring(0,4)) == currentYear) {
         count++;
       }
     }
@@ -125,17 +124,18 @@ export default class ClientCalendar extends Component<Props> {
     this.setState({
       addRemoveTodayButton: this.setAddRemoveTodayButton(this.state.currentFullDate),
     });
+    this.saveData();
   }
 
   onMonthChange(month) { 
     this.setState({
       currentMonth: month.month - 1,
-      currentMonthSessions: this.getTotalSessions(month.month),
+      currentMonthSessions: this.getTotalSessions(month.month, month.year),
       monthVisible: this.getTodayDate(1, month.month, month.year),
     });
   }
 
-  onBackPress() {
+  saveData() {
     try {
       AsyncStorage.getItem('client_database').then((value) => {
         let currData = JSON.parse(value);
@@ -143,9 +143,7 @@ export default class ClientCalendar extends Component<Props> {
         currData.splice(currData.indexOf(currClientData), 1);
         currClientData.markedDates = this.state.markedDates;
         currData.push(currClientData);
-        AsyncStorage.setItem('client_database', JSON.stringify(currData)).then(() => {
-          this.props.navigation.navigate('Home');
-        })
+        AsyncStorage.setItem('client_database', JSON.stringify(currData))
       })
     } catch(e) {
 
@@ -158,7 +156,7 @@ export default class ClientCalendar extends Component<Props> {
     this.setState({
       monthVisible: this.state.currentFullDate,
       currentMonth: month,
-      currentMonthSessions: this.getTotalSessions(month + 1),
+      currentMonthSessions: this.getTotalSessions(month + 1, date.getFullYear()),
 
     });
   }
@@ -166,16 +164,7 @@ export default class ClientCalendar extends Component<Props> {
   render() {
     let marked = this.state.markedDates;
     let allMarkedDays = {}
-    /*
-    marked.forEach((day) => {
-      allMarkedDays = {
-        ...allMarkedDays,
-        [day]: {
-          selected: true
-        }
-      };
-    });
-    */
+
     for (i = 0; i < this.state.markedDates.length; i++) {
       allMarkedDays = {
         ...allMarkedDays,
@@ -229,6 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   spacing: {
+    flex: 1,
     alignItems: 'center'
 
   },
