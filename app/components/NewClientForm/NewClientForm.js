@@ -19,16 +19,17 @@ export default class NewClientForm extends Component {
   }
 
   static navigationOptions = {
-    title: 'New Client'
+    title: 'New Client',
+
   }
 
-  onPress() {
+  onPressSubmit() {
     const clientData = [];
     const data = {
       name: this.state.name,
       sessionsSigned: this.state.sessionsSigned,
       sessionsCompleted: this.state.sessionsCompleted,
-      markedDates: ['2018-09-14'],
+      markedDates: ['2000-09-14'],
     }
     clientData.push(data);
     try {
@@ -37,20 +38,21 @@ export default class NewClientForm extends Component {
           const currData = JSON.parse(value);
           currData.push(data);
           AsyncStorage.setItem('client_database', JSON.stringify(currData)).then(() => {
-            this.props.navigation.navigate('Home');
+            this.props.navigation.state.params.onNavigateBack();
+            this.props.navigation.navigate('Home', {onGoBack: () => this.refresh()});
           });
         }
         else {
           AsyncStorage.setItem('client_database', JSON.stringify(clientData)).then(() => {
-            this.props.navigation.navigate('Home');
-          });    
+            this.props.navigation.state.params.onNavigateBack();
+            this.props.navigation.navigate('Home', {onGoBack: () => this.refresh()});
+          });   
         }
       })
       
     } catch(error) {
       console.log(error);
     }
-
   } 
 
   onChangeText(value) {
@@ -105,7 +107,7 @@ export default class NewClientForm extends Component {
           title="Submit"
           disabled={this.state.nameFieldEmpty}
           buttonStyle={{ backgroundColor: 'green' }}
-          onPress={() => {this.onPress()}}
+          onPress={() => {this.onPressSubmit()}}
         />
       </View>
     );
