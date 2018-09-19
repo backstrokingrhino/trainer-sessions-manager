@@ -1,14 +1,6 @@
 import React, {Component} from 'react';
 import {AppRegistry, StyleSheet, Text, View, ListView, AsyncStorage, FlatList, TouchableHighlight, Alert} from 'react-native';
 import {Header, Button, List, ListItem, Icon} from 'react-native-elements';
-import { Swipeout} from 'react-native-swipeout';
-
-const testList = [
-  {
-    name: 'Hello'
-  },
-  { name: 'World!'}
-];
 
 type Props = {};
 export default class ClientsPage extends Component<Props> {

@@ -8,12 +8,6 @@ import { Calendar, CalendarList } from 'react-native-calendars';
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", 
                 "September", "October", "November", "December"];
 
-let markedDatesTest = [
-    '2018-09-16',
-    '2018-09-17',
-    '2018-09-18',
-    '2018-09-19'
-];
 var date = new Date(Date());
 
 type Props = {};
@@ -86,12 +80,17 @@ export default class ClientCalendar extends Component<Props> {
     return (false);
   }
 
-  getTotalSessions(currentMonth, currentYear) {
+  getTotalSessions(currentMonth, currentYear) { //current month and year the calendar is on
     let count = 0;
     let marked = this.state.markedDates;
     for (i = 0; i < this.state.markedDates.length; i++) {
-      if (parseInt(marked[i].substring(5, 7)) == currentMonth && parseInt(marked[i].substring(0,4)) == currentYear) {
-        count++;
+      if (currentMonth <= parseInt(this.state.currentFullDate.substring(5, 7))) {
+        if (parseInt(marked[i].substring(5, 7)) == currentMonth && 
+            parseInt(marked[i].substring(0,4)) == currentYear && 
+            (parseInt(marked[i].substring(8)) <= parseInt(this.state.currentFullDate.substring(8)) ||
+             parseInt(marked[i].substring(5, 7)) < parseInt(this.state.currentFullDate.substring(5, 7)))) {
+          count++;
+        } 
       }
     }
     return (count);
@@ -116,10 +115,14 @@ export default class ClientCalendar extends Component<Props> {
     }
     //  check if current month sessions need to be changed
     if (this.state.monthVisible.substring(5, 7) == dateString.substring(5, 7)) {
-      this.setState({
-        currentMonthSessions: this.state.currentMonthSessions + sessionChange,
+      if((parseInt(dateString.substring(8)) <= parseInt(this.state.currentFullDate.substring(8)) &&
+         parseInt(dateString.substring(5, 7)) <= parseInt(this.state.currentFullDate.substring(5, 7))) ||
+         parseInt(dateString.substring(5, 7)) < parseInt(this.state.currentFullDate.substring(5, 7))) {
+        this.setState({
+          currentMonthSessions: this.state.currentMonthSessions + sessionChange,
       })
     }
+  }
     //  setting state of add/remove session today button
     this.setState({
       addRemoveTodayButton: this.setAddRemoveTodayButton(this.state.currentFullDate),
