@@ -174,13 +174,14 @@ export default class ClientCalendar extends Component<Props> {
 
     return (
       <View style={styles.container}>
-        <View style={styles.body}>          
+        <View style={styles.body}>
+        <View style={{padding: 5}}>     
           <Button
             rounded
             title="Return to Current Month"
             onPress={() => this.onBackToCurrentPress()}
           />
-          
+        </View>  
           <Calendar
             current={this.state.monthVisible}
             onDayPress={(day) => {this.onDayPress(day.dateString)}}
@@ -201,7 +202,7 @@ export default class ClientCalendar extends Component<Props> {
           </View>
         </View>
         <View style={styles.footer}>
-        <Text style={styles.footerText}>Sessions Completed In {months[this.state.currentMonth]}: {this.state.currentMonthSessions}</Text>
+          <Text style={styles.footerText}>Sessions Completed In {months[this.state.currentMonth]}: {this.state.currentMonthSessions}</Text>
         </View>
       </View>
     );
@@ -219,7 +220,8 @@ const styles = StyleSheet.create({
   },
   spacing: {
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'center',
+    padding: 5
 
   },
   footerText: {
@@ -228,11 +230,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: '400'
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#555555',
-    marginBottom: 5,
-  },
   footer: {
     backgroundColor: '#7c7c7c',
     justifyContent: 'center',
@@ -240,11 +237,6 @@ const styles = StyleSheet.create({
     height: 60,
     bottom: 10
   },
-  button: {
-    flex: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-  }
 });
 
 AppRegistry.registerComponent('ClientCalendar', () => ClientCalendar);
