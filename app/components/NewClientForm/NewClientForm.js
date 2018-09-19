@@ -13,7 +13,6 @@ export default class NewClientForm extends Component {
     this.state = {
       name:'',
       sessionsSigned: -1,
-      sessionsCompleted: -1,
       nameFieldEmpty: true
     }
   }
@@ -27,7 +26,7 @@ export default class NewClientForm extends Component {
     const data = {
       name: this.state.name,
       sessionsSigned: this.state.sessionsSigned,
-      sessionsCompleted: this.state.sessionsCompleted,
+      sessionsCompleted: 0,
       markedDates: ['2000-09-14'],
     }
     clientData.push(data);
@@ -94,12 +93,6 @@ export default class NewClientForm extends Component {
           placeholder="Optional"
           keyboardType="number-pad"
           onChangeText={(value) => this.onSSChanged(value)}
-        />
-        <FormLabel>Sessions Completed</FormLabel>
-        <FormInput 
-          placeholder="Optional"
-          keyboardType="number-pad"
-          onChangeText={(value) => this.onSCChanged(value)}
         />
         <Button 
           raised
