@@ -176,13 +176,13 @@ export default class ClientCalendar extends Component<Props> {
     return (
       <View style={styles.container}>
         <View style={styles.body}>
-        <View style={{padding: 5}}>     
-          <Button
-            rounded
-            title="Return to Current Month"
-            onPress={() => this.onBackToCurrentPress()}
-          />
-        </View>  
+          <View style={{padding: 5}}>     
+            <Button
+              rounded
+              title="Return to Current Month"
+              onPress={() => this.onBackToCurrentPress()}
+            />
+          </View>  
           <Calendar
             current={this.state.monthVisible}
             onDayPress={(day) => {this.onDayPress(day.dateString)}}
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   spacing: {
     flex: 1,
     alignItems: 'center',
-    padding: 5
+    padding: 5,
 
   },
   footerText: {
@@ -244,6 +244,7 @@ const styles = StyleSheet.create({
     //alignItems: 'center',
     //height: 40,
     //bottom: 10
+    marginBottom: 20,
   },
 });
 
