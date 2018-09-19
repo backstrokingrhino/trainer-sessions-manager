@@ -20,7 +20,6 @@ export default class NewClientForm extends Component {
 
   static navigationOptions = {
     title: 'New Client',
-
   }
 
   onPressSubmit() {
@@ -39,13 +38,13 @@ export default class NewClientForm extends Component {
           currData.push(data);
           AsyncStorage.setItem('client_database', JSON.stringify(currData)).then(() => {
             this.props.navigation.state.params.onNavigateBack();
-            this.props.navigation.navigate('Home', {onGoBack: () => this.refresh()});
+            this.props.navigation.navigate('Home');
           });
         }
         else {
           AsyncStorage.setItem('client_database', JSON.stringify(clientData)).then(() => {
             this.props.navigation.state.params.onNavigateBack();
-            this.props.navigation.navigate('Home', {onGoBack: () => this.refresh()});
+            this.props.navigation.navigate('Home');
           });   
         }
       })

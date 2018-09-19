@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, ListView, AsyncStorage, FlatList, TouchableHighlight} from 'react-native';
-import {Header, Button, List, ListItem} from 'react-native-elements';
+import {AppRegistry, StyleSheet, Text, View, ListView, AsyncStorage, FlatList, TouchableHighlight, Alert} from 'react-native';
+import {Header, Button, List, ListItem, Icon} from 'react-native-elements';
+import { Swipeout} from 'react-native-swipeout';
 
 const testList = [
   {
@@ -41,6 +42,17 @@ export default class ClientsPage extends Component<Props> {
     }
   }
 
+  _showAlert(item) {
+    Alert.alert(
+      'Delete Client',
+      'Are you sure you want to delete this client?',
+      [
+        {text: 'Cancel', style: 'cancel'},
+        {text: 'Delete', onPress: () => this.deleteItem(item)}
+      ],
+    )
+  }
+
   onPress = () => {
     this.props.navigation.navigate('NewClient', {onNavigateBack: this.fetchClients});
   }  
@@ -57,8 +69,22 @@ export default class ClientsPage extends Component<Props> {
       <ListItem
         title={item.name}
         onPress={() => {this.userPressed(item)}}
+        rightIcon={{name: 'delete'}}
+        onPressRightIcon={() => {this._showAlert(item.name)}}
       />
     );
+  }
+
+  deleteItem(item) {
+    AsyncStorage.getItem('client_database').then((value) => {
+      let currData = JSON.parse(value);
+      let currClientData = currData.find(c => c.name === item);
+      currData.splice(currData.indexOf(currClientData), 1);
+      AsyncStorage.setItem('client_database', JSON.stringify(currData)).then(() => {
+        this.fetchClients();
+      });
+    });
+
   }
 
   render() {
@@ -67,13 +93,13 @@ export default class ClientsPage extends Component<Props> {
 
     return (
       <View style={styles.container}>
-        <Text></Text>
+        <View style={{paddingTop: 15}}>
         <Button
           raised
           title="+ Add Client"
           onPress={this.onPress}
         />
-        
+        </View>
         <View style={{flex: 1}}>
           <List>
             <FlatList
