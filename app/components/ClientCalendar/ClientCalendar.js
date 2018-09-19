@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import {AppRegistry, StyleSheet, Text, View, ListView, AsyncStorage} from 'react-native';
-import {Header, Button, Icon} from 'react-native-elements';
+import {Header, Button, Icon, Badge, List, ListItem} from 'react-native-elements';
 import { Calendar, CalendarList } from 'react-native-calendars';
 
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", 
@@ -171,6 +171,7 @@ export default class ClientCalendar extends Component<Props> {
         [marked[i]] : {selected: true}
       };
     }
+    let sessionsComp = `Sessions Completed In ${months[this.state.currentMonth]}: ${this.state.currentMonthSessions}`
 
     return (
       <View style={styles.container}>
@@ -201,9 +202,14 @@ export default class ClientCalendar extends Component<Props> {
             />
           </View>
         </View>
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Sessions Completed In {months[this.state.currentMonth]}: {this.state.currentMonthSessions}</Text>
-        </View>
+        <List containerStyle={styles.footer}>
+          <ListItem
+            title={sessionsComp}
+            hideChevron
+            titleStyle={styles.footerText}
+          />
+          
+        </List>        
       </View>
     );
   }
@@ -225,17 +231,19 @@ const styles = StyleSheet.create({
 
   },
   footerText: {
-    fontSize: 20,
-    color: '#ffffff',
+    fontSize: 17,
+    color: '#000',
     textAlign: 'center',
-    fontWeight: '400'
+    fontWeight: '400',
+    alignItems: 'center',
   },
   footer: {
-    backgroundColor: '#7c7c7c',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 60,
-    bottom: 10
+    //backgroundColor: '#7c7c7c',
+    backgroundColor: 'lightgrey',
+    //justifyContent: 'center',
+    //alignItems: 'center',
+    //height: 40,
+    //bottom: 10
   },
 });
 
