@@ -169,10 +169,26 @@ export default class ClientCalendar extends Component<Props> {
     let allMarkedDays = {}
 
     for (i = 0; i < this.state.markedDates.length; i++) {
-      allMarkedDays = {
-        ...allMarkedDays,
-        [marked[i]] : {selected: true}
-      };
+      if (parseInt(marked[i].substring(5, 7)) > parseInt(this.state.currentFullDate.substring(5, 7)) ||
+          parseInt(marked[i].substring(0, 4)) > parseInt(this.state.currentFullDate.substring(0, 4))) {
+        allMarkedDays = {
+          ...allMarkedDays,
+          [marked[i]] : {selected: true, selectedColor: 'lightgrey'}
+        };
+      }
+      else if (parseInt(marked[i].substring(5, 7)) == parseInt(this.state.currentFullDate.substring(5, 7)) &&
+                 parseInt(marked[i].substring(8)) > parseInt(this.state.currentFullDate.substring(8))) {
+        allMarkedDays = {
+          ...allMarkedDays,
+          [marked[i]] : {selected: true, selectedColor: 'lightgrey'}
+        };
+      }
+      else {
+        allMarkedDays = {
+          ...allMarkedDays,
+          [marked[i]] : {selected: true}
+        };
+      }
     }
     let sessionsComp = `Sessions Completed In ${months[this.state.currentMonth]}: ${this.state.currentMonthSessions}`
 
